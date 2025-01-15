@@ -201,10 +201,11 @@ if (!dir.exists(plots_dir_go)) {
 
 
 go_calculator <- function(degs, filename, list=FALSE, result=F){
-  #degs es un archivo de salida de degs_calculator con UP y DOWNS
-  #filename es el nombre de los archivos que va a generar
-  #list es un booleano que indica si le hemos dado una lista simple de genes o el archivo de salida de degs
-  #opcion de lista single
+
+  # degs - output data from degs_calculator, with UP and DOWN
+  # filename - name of the file to generate
+  #list -  boolean which allows to use simple list of degs (no degs_calculator output)
+
   if (list){
     print(paste('Analizando: ', filename))
     BP_degs <- enrichGO(gene = degs,
@@ -216,7 +217,7 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
                         qvalueCutoff  = 0.05,
                         readable      = TRUE,
                         universe = universe)
-    print(paste(nrow(BP_degs), 'GO de BP encontradas'))
+    print(paste(nrow(BP_degs), ' BP GO'))
     
     CC_degs<- enrichGO(gene = degs,
                        keyType = 'SYMBOL',
@@ -227,7 +228,7 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
                        qvalueCutoff  = 0.05,
                        readable      = TRUE,
                        universe = universe)
-    print(paste(nrow(CC_degs), 'GO de CC encontradas'))
+    print(paste(nrow(CC_degs), ' CC GO'))
     MF_degs <- enrichGO(gene = degs,
                         keyType = 'SYMBOL',
                         OrgDb         = org.Mm.eg.db,
@@ -237,13 +238,13 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
                         qvalueCutoff  = 0.05,
                         readable      = TRUE,
                         universe = universe)
-    print(paste(nrow(MF_degs), 'GO de MF encontradas'))
+    print(paste(nrow(MF_degs), ' MF GO'))
     
     
     if (result){
       return(list(BP =BP_degs, CC=CC_degs, MF = MF_degs))  
     }
-    #salvado de resultados
+    #sSAVE
     results_dir_go<- 'results/GO'
     if (!dir.exists(results_dir_go)) {
       dir.create(results_dir_go)
@@ -257,9 +258,9 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
     go_plot(CC_degs, filename = filename, type = 'CC')
     
     
-  } #lista de genes
+  } 
   
-  else{
+  else{#gene list
     print(paste('Analizando: ', filename))
     
     for (i in 1:length(degs)){
@@ -273,7 +274,7 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
                                qvalueCutoff  = 0.05,
                                readable      = TRUE,
                                universe = universe)
-        print(paste(nrow(BP_degs_UP), 'GO de BP encontradas en UP'))
+        print(paste(nrow(BP_degs_UP), 'BP GO UP'))
         
         CC_degs_UP <- enrichGO(gene = degs$UP$Gene_ID,
                                keyType = 'SYMBOL',
@@ -284,7 +285,7 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
                                qvalueCutoff  = 0.05,
                                readable      = TRUE,
                                universe = universe)
-        print(paste(nrow(CC_degs_UP), 'GO de CC encontradas en UP'))
+        print(paste(nrow(CC_degs_UP), 'CC GO UP'))
         MF_degs_UP <- enrichGO(gene = degs$UP$Gene_ID,
                                keyType = 'SYMBOL',
                                OrgDb         = org.Mm.eg.db,
@@ -294,9 +295,9 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
                                qvalueCutoff  = 0.05,
                                readable      = TRUE,
                                universe = universe)
-        print(paste(nrow(MF_degs_UP), 'GO de MF encontradas en UP'))
+        print(paste(nrow(MF_degs_UP), 'MF GO UP'))
         
-        #salvado de resultados
+        #save
         results_dir_go_up <- 'results/GO/UP'
         if (!dir.exists(results_dir_go_up)) {
           dir.create(results_dir_go_up)
@@ -315,7 +316,7 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
                                  qvalueCutoff  = 0.05,
                                  readable      = TRUE,
                                  universe = universe)
-        print(paste(nrow(BP_degs_DOWN), 'GO de BP encontradas en DOWN'))
+        print(paste(nrow(BP_degs_DOWN), 'BP GO DOWN'))
         
         CC_degs_DOWN <- enrichGO(gene = degs$DOWN$Gene_ID,
                                  keyType = 'SYMBOL',
@@ -326,7 +327,7 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
                                  qvalueCutoff  = 0.05,
                                  readable      = TRUE,
                                  universe = universe)
-        print(paste(nrow(CC_degs_DOWN), 'GO de CC encontradas en DOWN'))
+        print(paste(nrow(CC_degs_DOWN), 'CC GO DOWN'))
         
         MF_degs_DOWN <- enrichGO(gene = degs$DOWN$Gene_ID,
                                  keyType = 'SYMBOL',
@@ -337,9 +338,9 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
                                  qvalueCutoff  = 0.05,
                                  readable      = TRUE,
                                  universe = universe)
-        print(paste(nrow(MF_degs_DOWN), 'GO de MF encontradas en DOWN'))
+        print(paste(nrow(MF_degs_DOWN), 'MF GO DOWN'))
         
-        #salvado de resultados
+        #sAVE
         results_dir_go_DOWN <- 'results/GO/DOWN'
         if (!dir.exists(results_dir_go_DOWN)) {
           dir.create(results_dir_go_DOWN)
@@ -350,19 +351,7 @@ go_calculator <- function(degs, filename, list=FALSE, result=F){
       }
     }
     
-    
-    
-    # go_plot(BP_degs_UP, filename = filename, sign = 'UP', type = 'BP')
-    # go_plot(MF_degs_UP, filename = filename, sign = 'UP', type = 'MF')
-    # go_plot(CC_degs_UP, filename = filename, sign = 'UP', type = 'CC')
-    # 
-    # go_plot(BP_degs_DOWN, filename = filename, sign = 'DOWN', type = 'BP')
-    # go_plot(MF_degs_DOWN, filename = filename, sign = 'DOWN', type = 'MF')
-    # go_plot(CC_degs_DOWN, filename = filename, sign = 'DOWN', type = 'CC')
-    #aqui van los plots
-    
-    
-  } #archivo con UP y DOWNs
+  } 
   
 }
 
